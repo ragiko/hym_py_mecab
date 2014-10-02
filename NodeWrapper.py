@@ -18,19 +18,19 @@ class NodeWrapper:
     """
 
     def __init__(self, node):
-		self.surface = node.surface
+		self.surface = node.surface.decode("utf-8")
 		node_array = node.feature.split(",")
 
 		self.pos = []
-		self.pos = node_array[0]
-		self.pos_detail1 = node_array[1]
-		self.pos_detail2 = node_array[2]
-		self.pos_detail3 = node_array[3]
-		self.conj_form = node_array[4]
-		self.conj_type = node_array[5]
-		self.base = node_array[6]
+		self.pos = node_array[0].decode("utf-8")
+		self.pos_detail1 = node_array[1].decode("utf-8")
+		self.pos_detail2 = node_array[2].decode("utf-8")
+		self.pos_detail3 = node_array[3].decode("utf-8")
+		self.conj_form = node_array[4].decode("utf-8")
+		self.conj_type = node_array[5].decode("utf-8")
+		self.base = node_array[6].decode("utf-8")
 
 		if len(node_array) > 7:
-			self.read = node_array[7]
-			self.pron = node_array[8]
+			self.read = node_array[7].decode("utf-8")
+			self.pron = node_array[8].decode("utf-8")
 

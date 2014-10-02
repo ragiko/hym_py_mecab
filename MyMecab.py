@@ -1,45 +1,19 @@
 # coding: utf-8
 
 import MeCab
-
-class NodeWrapper:
-    """
-    nodeのデータを構造化
-    参考: http://yshtak.tumblr.com/post/26010459591/python-mecab
-
-	surface:表層
-    pos: 品詞
-    pos_detail1: 品詞細分類1
-    pos_detail2: 品詞細分類2
-    pos_detail3: 品詞細分類3
-    conj_form: 活用型
-    conj_type: 活用形
-    base: 基本形
-    read: 読み (もし存在するなら)
-    pron: 発音 (もし存在するなら)
-    """
-
-    def __init__(self, node):
-		self.surface = node.surface.decode("utf-8")
-		node_array = node.feature.split(",")
-
-		self.pos = node_array[0].decode("utf-8")
-		self.pos_detail1 = node_array[1].decode("utf-8")
-		self.pos_detail2 = node_array[2].decode("utf-8")
-		self.pos_detail3 = node_array[3].decode("utf-8")
-		self.conj_form = node_array[4].decode("utf-8")
-		self.conj_type = node_array[5].decode("utf-8")
-		self.base = node_array[6].decode("utf-8")
-
-		if len(node_array) > 7:
-			self.read = node_array[7].decode("utf-8")
-			self.pron = node_array[8].decode("utf-8")
+from NodeWrapper import NodeWrapper
+# import時にはfromを書く
+# 参考: http://www.python-izm.com/contents/basis/import.shtml
 
 class MecabParser:
+    """
+    文書を形態素解析し、単語を抽出するモジュール
+    """
+
     def __init__(self, doc):
         """
         _tagger: mecabのtagger
-        _doc: 解析する文書
+        _doc: 解析する文書 (unicode)
         _node_wrappers_cache: 形態素解析結果を一時的に保存
         """
 
@@ -124,7 +98,6 @@ class MecabParser:
             return surface if base == u'*' else base # return base
         else:
             return surface # return surface
-            
 
 if __name__ == "__main__":
     doc = u'MeCabで遊んでみよう！'
@@ -139,12 +112,18 @@ if __name__ == "__main__":
     # う, 助動詞, *, *, *, 不変化型, 基本形, う
     # ！, 記号, 一般, *, *, *, *, ！
 
+    # -------------------- 
+    # 名詞を抽出
+    # -------------------- 
     pos_set = set([u"名詞"])
     node_wrappers = mp.find_words_by_pos(pos_set, False)
     for n in node_wrappers:
         print n.encode("utf-8")
     # MeCab
 
+    # -------------------- 
+    # 名詞・動詞を抽出
+    # -------------------- 
     pos_set = set([u"名詞", u"動詞"])
     node_wrappers = mp.find_words_by_pos(pos_set, False)
     for n in node_wrappers:
@@ -152,7 +131,25 @@ if __name__ == "__main__":
     # MeCab
     # 遊ん
     # みよ
-    
+
+    # -------------------- 
+    # 品詞全てを抽出
+    # -------------------- 
+    pos_set = set([])
+    node_wrappers = mp.find_words_by_pos(pos_set, False)
+    for n in node_wrappers:
+        print n.encode("utf-8")
+    # MeCab
+    # で
+    # 遊ん
+    # で
+    # みよ
+    # う
+    # ！
+
+    # -------------------- 
+    # 名詞・動詞(原型)を抽出
+    # -------------------- 
     pos_set = set([u"名詞", u"動詞"])
     node_wrappers = mp.find_words_by_pos(pos_set, True)
     for n in node_wrappers:
