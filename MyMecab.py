@@ -41,6 +41,27 @@ class MecabParser:
         self._tagger = MeCab.Tagger('')
         self._doc = doc # unicode
         self._node_wrappers_cache = []
+    
+    def parse_dump(self):
+        """
+        Mecabの解析結果をdumpする関数
+        """
+        if (len(self._node_wrappers_cache) == 0):
+            self.save_node_wrappers()
+        
+        node_wrappers = self._node_wrappers_cache
+
+        for nw in node_wrappers:
+            print "%s, %s, %s, %s, %s, %s, %s, %s" % (
+                    nw.surface.encode("utf-8"),
+                    nw.pos.encode("utf-8"),
+                    nw.pos_detail1.encode("utf-8"),
+                    nw.pos_detail2.encode("utf-8"),
+                    nw.pos_detail3.encode("utf-8"),
+                    nw.conj_form.encode("utf-8"),
+                    nw.conj_type.encode("utf-8"),
+                    nw.base.encode("utf-8")
+                    )
         
     def save_node_wrappers(self):
         # http://shogo82148.github.io/blog/2012/12/15/mecab-python/
@@ -61,7 +82,9 @@ class MecabParser:
 
         self._node_wrappers_cache = node_wrappers
     
-    def find_words_by_pos(self, pos):
+
+    
+    def find_words_by_pos(self, pos_set):
 
         if (len(self._node_wrappers_cache) == 0):
             # メソッドは、 self 引数のメソッド属性を使って、他のメソッドを呼び出すことができます
@@ -70,18 +93,20 @@ class MecabParser:
 
         node_wrappers = self._node_wrappers_cache
 
-        if (pos == u""):
-            # posが""の時は全ての単語を返却
+        if (len(pos_set) == 0):
+            # pos_setが0の時は全ての単語を返却
             return [nw.surface for nw in node_wrappers]
         else:
-            return [nw.surface for nw in node_wrappers if nw.pos == pos]
+            return [nw.surface for nw in node_wrappers if nw.pos in pos_set]
         
 
 if __name__ == "__main__":
     doc = u'MeCabで遊んでみよう！'
     mp = MecabParser(doc)
+    mp.parse_dump()
 
-    node_wrappers = mp.find_words_by_pos(u"動詞")
+    pos_set = set([u"名詞", u"動詞", u"助詞"])
+    node_wrappers = mp.find_words_by_pos(pos_set)
 
     for n in node_wrappers:
         print n.encode("utf-8")
